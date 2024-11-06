@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import '../../css/main.css'
+import {useNavigate} from "react-router-dom";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -23,7 +24,7 @@ const LoginForm = () => {
         });
         if (responce.status === 200) {
             localStorage.setItem('token', responce.data.token);
-
+            navigate('/users');
             setEmail('');
             setPassword('');
             setError('');

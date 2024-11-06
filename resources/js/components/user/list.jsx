@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import axios from 'axios';  // Импортируем axios для запросов
+import axios from 'axios';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();  // Для навигации после удаления
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+        }
         const fetchUsers = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/users', {
@@ -33,7 +36,7 @@ const UsersList = () => {
         fetchUsers();
     }, []);
 
-    // Функция для удаления пользователя
+
     const handleDelete = async (uuid) => {
         const token = localStorage.getItem('token');
         try {
@@ -43,7 +46,7 @@ const UsersList = () => {
                 }
             });
             if (response.status === 200) {
-                // Удаляем пользователя из состояния, чтобы обновить список
+
                 setUsers(users.filter(user => user.uuid !== uuid));
             } else {
                 alert('Не удалось удалить пользователя');
