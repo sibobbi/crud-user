@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckUserForRemove;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserService;
@@ -11,7 +12,29 @@ class UserController extends Controller
 {
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $users = User::query()->paginate(10);
+
+
+        $sortField = $request->get('sortField', 'created_at');
+        $sortOrder = $request->get('sortOrder', 'asc');
+
+
+        $validSortFields = ['name', 'last_name', 'created_at'];
+        $validSortOrders = ['asc', 'desc'];
+
+
+        if (!in_array($sortField, $validSortFields)) {
+            return response()->json(['error' => 'Invalid sort field'], 400);
+        }
+
+        if (!in_array($sortOrder, $validSortOrders)) {
+            return response()->json(['error' => 'Invalid sort order'], 400);
+        }
+
+
+        $users = User::query()
+            ->orderBy($sortField, $sortOrder)
+            ->paginate(10);
+
 
         return response()->json($users);
     }
@@ -27,7 +50,7 @@ class UserController extends Controller
         return $service->update($request->user(), $request->validated(), $uuid);
     }
 
-    public function destroy(Request $request, $uuid, UserService $service): \Illuminate\Http\JsonResponse
+    public function destroy(CheckUserForRemove $request, $uuid, UserService $service): \Illuminate\Http\JsonResponse
     {
         return $service->destroy($request->user(), $uuid);
     }
@@ -37,7 +60,7 @@ class UserController extends Controller
         return $service->restore($request->user(),$uuid);
     }
 
-    public function remove(Request $request, $uuid, UserService $service): \Illuminate\Http\JsonResponse
+    public function remove(CheckUserForRemove $request, $uuid, UserService $service): \Illuminate\Http\JsonResponse
     {
         return $service->destroy($request->user(), $uuid);
     }

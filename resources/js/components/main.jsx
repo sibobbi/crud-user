@@ -9,7 +9,6 @@ import Edit from "./user/edit.jsx";
 import Logout from "./logout.jsx";
 const Main = () => {
     const [token, setToken] = useState(localStorage.getItem('token'));
-    const [show, setShow] = useState(true);
 
     return (
         <div>

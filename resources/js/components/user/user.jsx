@@ -26,7 +26,6 @@ const User = () => {
             setError(err.message);
         }
     };
-
         fetchUser();
 }, []);
 

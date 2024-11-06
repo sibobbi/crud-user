@@ -21,8 +21,6 @@ class UserService
     {
         $deleteUser = User::query()->where('uuid',$uuid)->firstOrFail();
 
-        $this->deleteValidate($authUser, $deleteUser);
-
         $deleteUser->delete();
 
         $authUser->addHistory(LoggerType::SOFT_DELETE, $uuid);
@@ -45,8 +43,6 @@ class UserService
     {
         $removeUser = User::query()->withTrashed()->where('uuid',$uuid)->firstOrFail();
 
-        $this->deleteValidate($authUser, $removeUser);
-
         $authUser->forceDelete();
 
         $authUser->addHistory(LoggerType::REMOVE, $uuid);
@@ -54,10 +50,4 @@ class UserService
         return response()->json(['message' => 'Пользователь удален навсегда']);
     }
 
-    public function deleteValidate(User $authUser, User $deleteUser)
-    {
-        if ($authUser->id === $deleteUser->id) {
-            throw new \Exception('Нельзя удалять свою учетную запись');
-        }
-    }
 }
