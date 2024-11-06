@@ -14,8 +14,6 @@ trait Logger
             'description' => $loggerType->getDescription($uuid)
         ]);
 
-
-
         $this->histories()->save($newHistory);
 
     }
